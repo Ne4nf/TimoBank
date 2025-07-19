@@ -26,11 +26,28 @@ fake = Faker('vi_VN')  # Vietnamese locale
 class DatabaseConfig:
     """Database configuration"""
     def __init__(self):
-        self.host = os.getenv('DB_HOST', 'localhost')
-        self.port = os.getenv('DB_PORT', '5432')
-        self.database = os.getenv('DB_NAME', 'timo_banking')
-        self.username = os.getenv('DB_USER', 'postgres')
-        self.password = os.getenv('DB_PASSWORD', 'postgres')
+        # Try to get DATABASE_URL first (Render style)
+        database_url = os.getenv('DATABASE_URL')
+        if database_url:
+            # Parse DATABASE_URL: postgresql://user:pass@host:port/db
+            import re
+            match = re.match(r'postgresql://([^:]+):([^@]+)@([^:]+):(\d+)/(.+)', database_url)
+            if match:
+                self.username, self.password, self.host, self.port, self.database = match.groups()
+            else:
+                # Fallback to individual env vars
+                self.host = os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', 'localhost'))
+                self.port = os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432'))
+                self.database = os.getenv('POSTGRES_DB', os.getenv('DB_NAME', 'timo_banking'))
+                self.username = os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres'))
+                self.password = os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', 'postgres'))
+        else:
+            # Use individual environment variables
+            self.host = os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', 'localhost'))
+            self.port = os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432'))
+            self.database = os.getenv('POSTGRES_DB', os.getenv('DB_NAME', 'timo_banking'))
+            self.username = os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres'))
+            self.password = os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', 'postgres'))
     
     def get_connection_string(self):
         return f"postgresql://{self.username}:{self.password}@{self.host}:{self.port}/{self.database}"
