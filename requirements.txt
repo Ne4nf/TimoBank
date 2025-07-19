@@ -1,0 +1,31 @@
+# TIMO Banking Data Platform Requirements
+
+# Core Python packages
+psycopg2-binary==2.9.7
+python-dotenv==1.0.0
+faker==19.13.0
+
+# Data Quality and Monitoring
+pandas==2.1.4
+numpy==1.24.3
+
+# FastAPI Backend
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+pydantic==2.4.2
+
+# Airflow (for orchestration)
+apache-airflow==2.7.3
+apache-airflow-providers-postgres==5.7.1
+
+# Development and Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+
+# Optional: Jupyter for data exploration
+jupyter==1.0.0
+matplotlib==3.8.2
+seaborn==0.13.0
