@@ -28,6 +28,9 @@ jobs:
       run: |
         mkdir -p docs
         
+        # Create .nojekyll to prevent Jekyll processing
+        touch docs/.nojekyll
+        
         # Create documentation website
         cat > docs/index.html << 'EOF'
         <!DOCTYPE html>
