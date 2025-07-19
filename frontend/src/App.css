@@ -1,0 +1,82 @@
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ant-layout-sider-collapsed .logo {
+  margin: 16px 8px;
+}
+
+.dashboard-card {
+  margin-bottom: 16px;
+}
+
+.metric-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+.metric-label {
+  color: #666;
+  font-size: 14px;
+}
+
+.status-good {
+  color: #52c41a;
+}
+
+.status-warning {
+  color: #faad14;
+}
+
+.status-critical {
+  color: #ff4d4f;
+}
+
+.alert-item {
+  padding: 12px;
+  border-left: 4px solid #ccc;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.alert-item.high {
+  border-left-color: #ff4d4f;
+}
+
+.alert-item.medium {
+  border-left-color: #faad14;
+}
+
+.alert-item.low {
+  border-left-color: #52c41a;
+}
+
+.alert-item.critical {
+  border-left-color: #722ed1;
+}
+
+.chart-container {
+  height: 300px;
+  margin: 20px 0;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.error-container {
+  text-align: center;
+  padding: 40px;
+  color: #ff4d4f;
+}
