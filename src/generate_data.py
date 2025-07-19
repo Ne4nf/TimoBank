@@ -73,6 +73,10 @@ class BankingDataGenerator:
             )
             self.conn.autocommit = True
             logger.info("Connected to database successfully")
+            
+            # Create tables if they don't exist
+            self.create_tables()
+            
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
             raise
@@ -82,6 +86,143 @@ class BankingDataGenerator:
         if self.conn:
             self.conn.close()
             logger.info("Database connection closed")
+    
+    def create_tables(self):
+        """Create all required tables"""
+        logger.info("Creating database tables...")
+        
+        cursor = self.conn.cursor()
+        
+        # Create customers table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS customers (
+                customer_id UUID PRIMARY KEY,
+                cccd_number VARCHAR(12) UNIQUE NOT NULL,
+                passport_number VARCHAR(20) UNIQUE,
+                full_name VARCHAR(255) NOT NULL,
+                date_of_birth DATE NOT NULL,
+                phone_number VARCHAR(15) UNIQUE NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                address TEXT,
+                kyc_status VARCHAR(20) DEFAULT 'PENDING' CHECK (kyc_status IN ('PENDING', 'VERIFIED', 'REJECTED')),
+                risk_level VARCHAR(10) DEFAULT 'LOW' CHECK (risk_level IN ('LOW', 'MEDIUM', 'HIGH')),
+                is_active BOOLEAN DEFAULT true,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_by VARCHAR(100)
+            )
+        """)
+        
+        # Create bank_accounts table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS bank_accounts (
+                account_id UUID PRIMARY KEY,
+                customer_id UUID NOT NULL REFERENCES customers(customer_id),
+                account_number VARCHAR(20) UNIQUE NOT NULL,
+                account_type VARCHAR(20) NOT NULL CHECK (account_type IN ('CHECKING', 'SAVINGS', 'CREDIT')),
+                balance DECIMAL(15,2) DEFAULT 0.00,
+                currency VARCHAR(3) DEFAULT 'VND',
+                status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'SUSPENDED', 'CLOSED')),
+                daily_limit DECIMAL(15,2),
+                monthly_limit DECIMAL(15,2),
+                opened_date DATE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Create devices table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS devices (
+                device_id UUID PRIMARY KEY,
+                customer_id UUID NOT NULL REFERENCES customers(customer_id),
+                device_fingerprint VARCHAR(255) UNIQUE NOT NULL,
+                device_type VARCHAR(20) CHECK (device_type IN ('MOBILE', 'WEB', 'ATM')),
+                device_os VARCHAR(50),
+                device_model VARCHAR(100),
+                ip_address INET,
+                user_agent TEXT,
+                is_trusted BOOLEAN DEFAULT false,
+                last_used_at TIMESTAMP,
+                verification_status VARCHAR(20) DEFAULT 'UNVERIFIED' CHECK (verification_status IN ('VERIFIED', 'UNVERIFIED', 'SUSPICIOUS')),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Create authentication_logs table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS authentication_logs (
+                auth_id UUID PRIMARY KEY,
+                customer_id UUID NOT NULL REFERENCES customers(customer_id),
+                device_id UUID REFERENCES devices(device_id),
+                auth_method VARCHAR(20) CHECK (auth_method IN ('PASSWORD', 'OTP_SMS', 'OTP_EMAIL', 'BIOMETRIC', 'PIN')),
+                auth_status VARCHAR(20) CHECK (auth_status IN ('SUCCESS', 'FAILED', 'EXPIRED')),
+                ip_address INET,
+                location_data JSONB,
+                risk_score INTEGER CHECK (risk_score >= 0 AND risk_score <= 100),
+                failed_attempts INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Create transactions table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                transaction_id UUID PRIMARY KEY,
+                from_account_id UUID NOT NULL REFERENCES bank_accounts(account_id),
+                to_account_id UUID REFERENCES bank_accounts(account_id),
+                transaction_type VARCHAR(20) CHECK (transaction_type IN ('TRANSFER', 'DEPOSIT', 'WITHDRAWAL', 'PAYMENT', 'REFUND')),
+                amount DECIMAL(15,2) NOT NULL,
+                currency VARCHAR(3) DEFAULT 'VND',
+                description TEXT,
+                reference_number VARCHAR(50) UNIQUE,
+                status VARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED', 'CANCELLED')),
+                fee_amount DECIMAL(15,2) DEFAULT 0.00,
+                exchange_rate DECIMAL(10,6) DEFAULT 1.000000,
+                channel VARCHAR(20) CHECK (channel IN ('ATM', 'ONLINE', 'MOBILE', 'BRANCH', 'CARD')),
+                device_id UUID REFERENCES devices(device_id),
+                auth_method VARCHAR(20),
+                risk_score INTEGER CHECK (risk_score >= 0 AND risk_score <= 100),
+                is_high_risk BOOLEAN DEFAULT false,
+                requires_strong_auth BOOLEAN DEFAULT false,
+                merchant_code VARCHAR(20),
+                merchant_name VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                processed_by VARCHAR(100)
+            )
+        """)
+        
+        # Create daily_summaries table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS daily_summaries (
+                customer_id UUID NOT NULL REFERENCES customers(customer_id),
+                summary_date DATE NOT NULL,
+                total_transactions INTEGER DEFAULT 0,
+                total_amount DECIMAL(15,2) DEFAULT 0.00,
+                high_value_transactions INTEGER DEFAULT 0,
+                strong_auth_transactions INTEGER DEFAULT 0,
+                failed_transactions INTEGER DEFAULT 0,
+                risk_score_avg DECIMAL(5,2) DEFAULT 0.00,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (customer_id, summary_date)
+            )
+        """)
+        
+        # Create indexes for better performance
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_customers_cccd ON customers(cccd_number)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone_number)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_accounts_customer ON bank_accounts(customer_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_devices_customer ON devices(customer_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_auth_logs_customer ON authentication_logs(customer_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_auth_logs_created ON authentication_logs(created_at)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_from_account ON transactions(from_account_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_created ON transactions(created_at)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_daily_summaries_date ON daily_summaries(summary_date)")
+        
+        logger.info("Database tables created successfully!")
     
     def generate_cccd(self):
         """Generate Vietnamese CCCD number (12 digits)"""
