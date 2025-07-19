@@ -93,6 +93,10 @@ class BankingDataGenerator:
         
         cursor = self.conn.cursor()
         
+        # Clean existing data first (for fresh deployment)
+        logger.info("Cleaning existing data...")
+        cursor.execute("TRUNCATE TABLE fraud_alerts, daily_summaries, transactions, authentication_logs, devices, bank_accounts, customers RESTART IDENTITY CASCADE")
+        
         # Create customers table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS customers (
@@ -554,6 +558,88 @@ class BankingDataGenerator:
         
         logger.info("Successfully generated daily summaries")
     
+    def generate_fraud_alerts(self, count=50):
+        """Generate fraud alerts for high-risk transactions"""
+        logger.info(f"Generating {count} fraud alerts...")
+        
+        cursor = self.conn.cursor()
+        
+        # Get high-risk transactions to create alerts for
+        cursor.execute("""
+            SELECT transaction_id, from_account_id, amount, risk_score
+            FROM transactions 
+            WHERE is_high_risk = TRUE OR risk_score > 70
+            ORDER BY RANDOM()
+            LIMIT %s
+        """, (count,))
+        
+        high_risk_transactions = cursor.fetchall()
+        
+        alert_types = [
+            'HIGH_VALUE_TRANSACTION',
+            'UNUSUAL_SPENDING_PATTERN', 
+            'SUSPICIOUS_DEVICE',
+            'MULTIPLE_FAILED_AUTH',
+            'VELOCITY_CHECK_FAILED',
+            'GEOGRAPHIC_ANOMALY'
+        ]
+        
+        severities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']
+        statuses = ['OPEN', 'INVESTIGATING', 'RESOLVED', 'FALSE_POSITIVE']
+        
+        for i, txn in enumerate(high_risk_transactions):
+            # Get customer from transaction
+            cursor.execute("""
+                SELECT customer_id FROM bank_accounts 
+                WHERE account_id = %s
+            """, (txn['from_account_id'],))
+            result = cursor.fetchone()
+            
+            if not result:
+                continue
+                
+            customer_id = result['customer_id']
+            
+            # Create fraud alert
+            alert_data = {
+                'alert_id': str(uuid.uuid4()),
+                'transaction_id': txn['transaction_id'],
+                'customer_id': customer_id,
+                'alert_type': random.choice(alert_types),
+                'severity': random.choices(severities, weights=[20, 30, 35, 15])[0],
+                'description': f"High-risk transaction detected: {txn['amount']:,.0f} VND with risk score {txn['risk_score']}",
+                'status': random.choices(statuses, weights=[40, 20, 30, 10])[0],
+                'assigned_to': random.choice(['ANALYST_001', 'ANALYST_002', 'ANALYST_003', None]),
+                'created_at': fake.date_time_between(start_date='-30d', end_date='now')
+            }
+            
+            # Add resolution data for resolved alerts
+            if alert_data['status'] in ['RESOLVED', 'FALSE_POSITIVE']:
+                alert_data['resolved_at'] = fake.date_time_between(
+                    start_date=alert_data['created_at'], 
+                    end_date='now'
+                )
+                alert_data['resolution_notes'] = fake.sentence(nb_words=10)
+            else:
+                alert_data['resolved_at'] = None
+                alert_data['resolution_notes'] = None
+            
+            try:
+                cursor.execute("""
+                    INSERT INTO fraud_alerts (
+                        alert_id, transaction_id, customer_id, alert_type, severity,
+                        description, status, assigned_to, resolved_at, resolution_notes, created_at
+                    ) VALUES (
+                        %(alert_id)s, %(transaction_id)s, %(customer_id)s, %(alert_type)s, %(severity)s,
+                        %(description)s, %(status)s, %(assigned_to)s, %(resolved_at)s, %(resolution_notes)s, %(created_at)s
+                    )
+                """, alert_data)
+                
+            except psycopg2.IntegrityError:
+                continue
+        
+        logger.info(f"Successfully generated fraud alerts for {len(high_risk_transactions)} high-risk transactions")
+    
     def generate_all_data(self, customers=1000, transactions=50000, auth_logs=10000):
         """Generate all sample data"""
         logger.info("Starting data generation process...")
@@ -568,6 +654,7 @@ class BankingDataGenerator:
             self.generate_authentication_logs(auth_logs)
             self.generate_transactions(transactions)
             self.generate_daily_summaries()
+            self.generate_fraud_alerts(50)  # Generate 50 fraud alerts
             
             logger.info("Data generation completed successfully!")
             
