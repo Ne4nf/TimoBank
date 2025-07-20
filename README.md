@@ -13,7 +13,7 @@
 
 ## 🌟 **Live Production Demo**
 
-### 🚀 ** Web Demo **
+### 🚀 **Web Demo**
 - **🎨 Live Dashboard**: [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/)
 - **🔧 API Backend**: [https://timobanking.onrender.com/](https://timobanking.onrender.com/)
 - **📖 API Documentation**: [https://timobanking.onrender.com/docs](https://timobanking.onrender.com/docs)
