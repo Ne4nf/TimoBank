@@ -197,6 +197,23 @@ class BankingDataGenerator:
             )
         """)
         
+        # Create fraud_alerts table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS fraud_alerts (
+                alert_id UUID PRIMARY KEY,
+                transaction_id UUID REFERENCES transactions(transaction_id),
+                customer_id UUID NOT NULL REFERENCES customers(customer_id),
+                alert_type VARCHAR(50) NOT NULL,
+                severity VARCHAR(20) NOT NULL CHECK (severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+                description TEXT NOT NULL,
+                status VARCHAR(20) DEFAULT 'OPEN' CHECK (status IN ('OPEN', 'INVESTIGATING', 'RESOLVED', 'FALSE_POSITIVE')),
+                assigned_to VARCHAR(100),
+                resolved_at TIMESTAMP,
+                resolution_notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
         # Create daily_summaries table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS daily_summaries (
@@ -223,6 +240,9 @@ class BankingDataGenerator:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_from_account ON transactions(from_account_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_created ON transactions(created_at)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_transactions_status ON transactions(status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_fraud_alerts_customer ON fraud_alerts(customer_id)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_fraud_alerts_status ON fraud_alerts(status)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_fraud_alerts_severity ON fraud_alerts(severity)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_daily_summaries_date ON daily_summaries(summary_date)")
         
         logger.info("Database tables created successfully!")
