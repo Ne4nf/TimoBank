@@ -14,9 +14,9 @@
 ## 🌟 **Live Production Demo**
 
 ### 🚀 **Web Demo**
-- **🎨 Live Dashboard**: [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/)
-- **🔧 API Backend**: [https://timobanking.onrender.com/](https://timobanking.onrender.com/)
-- **📖 API Documentation**: [https://timobanking.onrender.com/docs](https://timobanking.onrender.com/docs)
+- **Live Dashboard**: [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/)
+- **API Backend**: [https://timobanking.onrender.com/](https://timobanking.onrender.com/)
+- **API Documentation**: [https://timobanking.onrender.com/docs](https://timobanking.onrender.com/docs)
 
 ### ⚡ **Production Features**
 - **30+ Vietnamese Bank Customers** with realistic CCCD numbers
@@ -24,27 +24,6 @@
 - **Real-time Data Quality Monitoring** with 95.8% accuracy score
 - **Compliance Dashboard** with high-value transaction alerts
 - **Fraud Detection System** with automated risk assessment
-
----
-
-## 🚀 **Quick Start Options**
-
-### 🌐 **Option 1: Use Live Demo (Recommended)**
-Simply visit [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/) - No setup required!
-
-### 🐳 **Option 2: Local Development**
-```bash
-git clone https://github.com/Ne4nf/TimoBank.git
-cd TimoBank
-docker-compose up -d
-```
-
-### 📱 **Local Access**
-- **Dashboard**: http://localhost:3000
-- **API Documentation**: http://localhost:8000/docs
-- **Database**: localhost:5432 (postgres/tuthuc1411)
-
-🌐 **Live Website**: https://ne4nf.github.io/TimoBank/
 
 ---
 
@@ -72,10 +51,10 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ### Access Applications
-- 🎨 **Dashboard**: http://localhost:3000
-- 🔧 **API Documentation**: http://localhost:8000/docs
-- ⚡ **Airflow UI**: http://localhost:8080 (admin/admin)
-- 🗄️ **Database**: localhost:5432 (postgres/tuthuc1411)
+- **Dashboard**: http://localhost:3000
+- **API Documentation**: http://localhost:8000/docs
+- **Airflow UI**: http://localhost:8080 
+- **Database**: localhost:5432 
 
 ## 🎯 **Project Overview**
 
@@ -231,8 +210,8 @@ docker-compose exec backend python /app/src/data_quality_standards.py
 ---
 
 
-**🎯 Status: LIVE & PRODUCTION READY** ✅  
-**📊 Quality Score: 95.8/100** 🏆  
-**🔒 Security: ENTERPRISE GRADE** 🛡️  
+**🎯 Status: LIVE & PRODUCTION READY** 
+**📊 Quality Score: 95.8/100**  
+**🔒 Security: ENTERPRISE GRADE**  
 
 *Visit the live demo at [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/) to explore the full platform*
