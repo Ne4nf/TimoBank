@@ -13,7 +13,7 @@
 
 ## 🌟 **Live Production Demo**
 
-### 🚀 **Try it Now - No Installation Required!**
+### 🚀 ** Web Demo **
 - **🎨 Live Dashboard**: [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/)
 - **🔧 API Backend**: [https://timobanking.onrender.com/](https://timobanking.onrender.com/)
 - **📖 API Documentation**: [https://timobanking.onrender.com/docs](https://timobanking.onrender.com/docs)
@@ -230,41 +230,6 @@ docker-compose exec backend python /app/src/data_quality_standards.py
 
 ---
 
-## 📞 **Support & Links**
-
-### 🔗 **Important Links**
-- **🎨 Live Dashboard**: [https://timo-banking.vercel.app/](https://timo-banking.vercel.app/)
-- **🔧 API Backend**: [https://timobanking.onrender.com/](https://timobanking.onrender.com/)
-- **📖 GitHub Repository**: [https://github.com/Ne4nf/TimoBank](https://github.com/Ne4nf/TimoBank)
-- **📚 API Documentation**: [https://timobanking.onrender.com/docs](https://timobanking.onrender.com/docs)
-
-### 🆘 **Getting Help**
-- **Issues**: Create GitHub issues for bugs or feature requests
-- **Documentation**: Comprehensive API docs available
-- **Logs**: Check production logs via cloud dashboards
-
----
-
-## 🏆 **Project Status**
-
-### ✅ **Production Ready**
-```
-✅ Live Demo Available    : https://timo-banking.vercel.app/
-✅ API Backend Running    : https://timobanking.onrender.com/
-✅ Database Connected     : PostgreSQL with sample data
-✅ Fraud Detection Active : Real-time monitoring enabled
-✅ Compliance Verified    : Vietnamese banking standards met
-✅ Documentation Complete : API docs and user guide ready
-```
-
-### 📊 **Quality Metrics**
-- **Code Quality**: Production-grade architecture
-- **Performance**: <200ms API response times
-- **Reliability**: Cloud-deployed with monitoring
-- **Security**: Enterprise security practices
-- **Compliance**: Vietnamese banking regulation adherent
-
----
 
 **🎯 Status: LIVE & PRODUCTION READY** ✅  
 **📊 Quality Score: 95.8/100** 🏆  
