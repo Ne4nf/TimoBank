@@ -77,6 +77,9 @@ class BankingDataGenerator:
             # Create tables if they don't exist
             self.create_tables()
             
+            # Clean any existing data
+            self.clean_existing_data()
+            
         except Exception as e:
             logger.error(f"Failed to connect to database: {e}")
             raise
@@ -92,10 +95,6 @@ class BankingDataGenerator:
         logger.info("Creating database tables...")
         
         cursor = self.conn.cursor()
-        
-        # Clean existing data first (for fresh deployment)
-        logger.info("Cleaning existing data...")
-        cursor.execute("TRUNCATE TABLE fraud_alerts, daily_summaries, transactions, authentication_logs, devices, bank_accounts, customers RESTART IDENTITY CASCADE")
         
         # Create customers table
         cursor.execute("""
@@ -227,6 +226,19 @@ class BankingDataGenerator:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_daily_summaries_date ON daily_summaries(summary_date)")
         
         logger.info("Database tables created successfully!")
+    
+    def clean_existing_data(self):
+        """Clean existing data for fresh deployment"""
+        logger.info("Cleaning existing data...")
+        
+        cursor = self.conn.cursor()
+        
+        # Safe cleanup - only if tables exist
+        try:
+            cursor.execute("TRUNCATE TABLE fraud_alerts, daily_summaries, transactions, authentication_logs, devices, bank_accounts, customers RESTART IDENTITY CASCADE")
+            logger.info("Existing data cleaned successfully!")
+        except psycopg2.errors.UndefinedTable:
+            logger.info("No existing data to clean - fresh database")
     
     def generate_cccd(self):
         """Generate Vietnamese CCCD number (12 digits)"""
