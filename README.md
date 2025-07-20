@@ -11,6 +11,25 @@
 
 > **Production Banking Data Quality Platform** with real-time monitoring, fraud detection, and compliance-ready architecture deployed on cloud infrastructure.
 
+### **Dashboard**
+<img width="1883" height="857" alt="Image" src="https://github.com/user-attachments/assets/be8419e0-9e61-41b8-bb07-daac143447b8" />
+
+### **Data Quality**
+<img width="1883" height="856" alt="Image" src="https://github.com/user-attachments/assets/a2b16ced-7dcf-4aa3-8a4b-8dbe39e26413" />
+
+### **Fraud Alerts**
+<img width="1889" height="858" alt="Image" src="https://github.com/user-attachments/assets/e62db189-1827-4bbe-a1fd-66718fe82677" />
+
+<img width="1883" height="857" alt="Image" src="https://github.com/user-attachments/assets/ec54082b-5f22-4c65-9737-a730f0e287b1" />
+
+## **Analytics**
+<img width="1879" height="858" alt="Image" src="https://github.com/user-attachments/assets/ef45453f-a9f6-407b-97f7-af1e4d2eeba5" />
+
+<img width="1883" height="859" alt="Image" src="https://github.com/user-attachments/assets/1a848135-959f-4274-8625-275d29a7d9ae" />
+
+## **Compliance**
+<img width="1896" height="862" alt="Image" src="https://github.com/user-attachments/assets/4cb7c259-2576-429f-b3df-289adef55ab8" />
+
 ## 🌟 **Live Production Demo**
 
 ### 🚀 **Web Demo**
