@@ -7,13 +7,6 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql)](https://www.postgresql.org/)
 [![Deploy](https://github.com/Ne4nf/TimoBank/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ne4nf/TimoBank/actions/workflows/deploy.yml)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen?logo=github)](https://ne4nf.github.io/TimoBank/)
-
-# 🏦 TIMO Banking Data Platform
-
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-green?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-18.2.0-blue?logo=react)](https://react.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Production-brightgreen)](https://timo-banking.vercel.app/)
 
 > **Production Banking Data Quality Platform** with real-time monitoring, fraud detection, and compliance-ready architecture deployed on cloud infrastructure.
